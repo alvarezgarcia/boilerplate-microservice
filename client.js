@@ -1,29 +1,29 @@
-// color-client.js
-var Seneca = require('seneca')
+import express from 'express'
+import S from 'seneca'
 
-Seneca({log: 'test'})
+const seneca = S({log: 'test'})
+const app = express()
 
-// load the mesh plugin
-.use('mesh')
 
-.ready( function () {
-    var seneca = this
+seneca.use('mesh').
+ready( function () {
 
-    seneca.act({role: 'items', cmd: 'find'}, function (err, out) {
+    let seneca = this
 
-        console.log(out)
+		app.get('/items', (req, res) => {
+			seneca.act({role: 'items', cmd: 'findAll'}, (err, out) => {
+        res.json(out)
+			})
+		})
 
-        // disconnect from the network
-        this.close()
-    })
+		app.get('/items/:id', (req, res) => {
+			seneca.act({role: 'items', cmd: 'find'}, (err, out) =>  {
+        res.json(out)
+			})
+		})
 
-		seneca.act({role: 'items', cmd: 'findAll'}, function (err, out) {
-
-        // prints #FF0000
-        console.log(out)
-
-        // disconnect from the network
-        this.close()
-    })
-
+		app.listen(8000, () => {
+			console.log('Started')
+		})
 })
+
