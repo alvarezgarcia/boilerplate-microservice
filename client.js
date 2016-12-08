@@ -1,11 +1,23 @@
 import express from 'express'
-import S from 'seneca'
+import Seneca from 'seneca'
 
-const seneca = S({log: 'test'})
 const app = express()
 
+const opts =  {
+  seneca: {
+    tag: 'api'
+  },
+  mesh: {
+    bases: [
+      "127.0.0.1:39000",
+      "127.0.0.1:39001"
+    ]
+  }
+}
 
-seneca.use('mesh').
+
+Seneca(opts.seneca).
+use('mesh', opts.mesh).
 ready( function () {
 
     let seneca = this
